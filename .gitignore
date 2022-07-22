@@ -36,6 +36,10 @@ out/
 ### VS Code ###
 .vscode/
 
+<<<<<<< HEAD
 ### To test Jwt
 !**/src/main/resources/static
 !**/src/main/resources/templates
+=======
+
+>>>>>>> 84c22971a70211bf452a3106170f96698f8d5eaf
