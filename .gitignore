@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### To test Jwt
+!**/src/main/resources/static
+!**/src/main/resources/templates
