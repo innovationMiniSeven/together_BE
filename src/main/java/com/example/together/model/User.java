@@ -18,14 +18,18 @@ public class User  extends TimeStamped {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    private String nickname;
+
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
 
-    public User(String username, String encode_password) {
-        this.username =username;
-        this.password = encode_password;
+    public User(String nickname, String username, String password) {
+        this.nickname = nickname;
+        this.username = username;
+        this.password = password;
     }
 }
