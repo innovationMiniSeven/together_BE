@@ -97,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public FormLoginFilter formLoginFilter() throws Exception {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
-        formLoginFilter.setFilterProcessesUrl("/user/login");
+        formLoginFilter.setFilterProcessesUrl("/api/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
@@ -124,13 +124,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
         // 회원 관리 API 허용
-        skipPathList.add("GET,/user/**");
+        skipPathList.add("GET,/api/**");
         skipPathList.add("POST,/user/signup");
 
-        //블로그 글 API 허용
+        //게시글 API 허용
         skipPathList.add("GET,/api/posts/**");
-        skipPathList.add("PUT,/api/posts/**");
-        skipPathList.add("DELETE,/api/posts/**");
+
+        skipPathList.add("POST,/api/post/**");
+        skipPathList.add("GET,/api/post/**");
+        skipPathList.add("PUT,/api/post/**");
+        skipPathList.add("DELETE,/api/post/**");
 
         skipPathList.add("GET,/api/comments/**");
         skipPathList.add("POST,/api/comments/**");
