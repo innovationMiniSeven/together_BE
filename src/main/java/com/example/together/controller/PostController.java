@@ -1,8 +1,13 @@
 package com.example.together.controller;
 
+import com.example.together.dto.EditPostRequestDto;
+import com.example.together.dto.GetPostRespnseDto;
+import com.example.together.model.User;
+import com.example.together.security.UserDetailsImpl;
 import com.example.together.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class PostController {
@@ -12,4 +17,21 @@ public class PostController {
     public PostController(PostService postService) {
         this.postService = postService;
     }
+
+
+    @GetMapping("/api/post/{postId}")
+    public GetPostRespnseDto getPost(@PathVariable Long postId){
+        return postService.getPost(postId);
+    }
+
+    @PutMapping("/api/post/{postId}")
+    public void editPost(@PathVariable Long postId, @RequestBody EditPostRequestDto reqeustDto){
+        postService.editPost(postId, reqeustDto);
+    }
+
+    @DeleteMapping("/api/post/{postId}")
+    public void deletePost(@PathVariable Long postId){
+        postService.deletePost(postId);
+    }
+
 }
