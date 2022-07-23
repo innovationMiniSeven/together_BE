@@ -23,6 +23,7 @@ public class CommentController {
 
     @PostMapping("/api/comment/{postId}")
     public void registerComment(@PathVariable Long postId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+
         if(userDetails.getUser() == null){
             throw new IllegalArgumentException("로그인 후 이용해주세요");
         }

@@ -36,4 +36,8 @@ public class PostService {
     public List<Post> getPosts() {
         return postRepository.findAll();
     }
+
+    public Post getPost(Long postId) {
+        return postRepository.findById(postId) .orElseThrow(()->new IllegalArgumentException("없는 글입니다,"));
+    }
 }
