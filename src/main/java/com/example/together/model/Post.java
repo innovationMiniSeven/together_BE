@@ -1,6 +1,7 @@
 package com.example.together.model;
 
 import com.example.together.TimeStamped;
+import com.example.together.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,16 +50,16 @@ public class Post extends TimeStamped {
     @Column(nullable = false)
     private int viewCount;
 
-    public Post(String title, String content, CategoryEnum category, Date deadline, int numberPeople, String contactMethod, User user, String imageUrl) {
-        this.title = title;
-        this.content = content;
-        this.category = category;
-        this.deadline = deadline;
-        this.numberPeople = numberPeople;
-        this.currentNumberPeople = 1;
-        this.contactMethod = contactMethod;
+    public Post(PostRequestDto requestDto, User user) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.category = requestDto.getCategory();
+        this.deadline = requestDto.getDeadline();
+        this.numberPeople = requestDto.getNumberPeople();
+        this.currentNumberPeople = requestDto.getCurrentNumberPeople();
+        this.contactMethod = requestDto.getContactMethod();
         this.user = user;
-        this.imageUrl = imageUrl;
+        this.imageUrl = requestDto.getImageUrl();
         this.viewCount = 0;
     }
 }
