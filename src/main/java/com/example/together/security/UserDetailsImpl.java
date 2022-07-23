@@ -54,10 +54,6 @@ public class UserDetailsImpl implements UserDetails {
 
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-
         return authorities;
     }
 }
-
-
-
