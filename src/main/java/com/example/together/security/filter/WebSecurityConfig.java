@@ -97,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public FormLoginFilter formLoginFilter() throws Exception {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
-        formLoginFilter.setFilterProcessesUrl("/user/login");
+        formLoginFilter.setFilterProcessesUrl("/api/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
@@ -115,35 +115,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtAuthFilter jwtFilter() throws Exception {
         List<String> skipPathList = new ArrayList<>();
-
-        // Static 정보 접근 허용
-        skipPathList.add("GET,/images/**");
-        skipPathList.add("GET,/css/**");
-
         // h2-console 허용
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
-        // 회원 관리 API 허용
-        skipPathList.add("GET,/user/**");
-        skipPathList.add("POST,/user/signup");
 
-        //블로그 글 API 허용
-        skipPathList.add("GET,/api/posts/**");
-        skipPathList.add("PUT,/api/posts/**");
-        skipPathList.add("DELETE,/api/posts/**");
-
-        skipPathList.add("GET,/api/comments/**");
-        skipPathList.add("POST,/api/comments/**");
-        skipPathList.add("PUT,/api/comments/**");
-        skipPathList.add("DELETE,/api/comments/**");
-
-        skipPathList.add("POST,/api/signup/**");
-
-
-        skipPathList.add("GET,/");
-        skipPathList.add("GET,/basic.js");
-
-        skipPathList.add("GET,/favicon.ico");
+        skipPathList.add("POST,/api/**");
+        skipPathList.add("GET,/api/**");
+        skipPathList.add("PUT,/api/**");
+        skipPathList.add("DELETE,/api/**");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
