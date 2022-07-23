@@ -41,6 +41,7 @@ public class CommentController {
 
     @DeleteMapping("/api/comment/{commentId}")
     public void deleteComments(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        System.out.println(userDetails.getUser().getUsername());
         if(userDetails.getUser() == null){
             throw new IllegalArgumentException("로그인 후 이용해주세요");
         }
