@@ -38,8 +38,8 @@ public class PostController {
     }
 
     @GetMapping("/api/posts")
-    public List<Post> getPosts() {
-        return postService.getPosts();
+    public List<Post> getPosts(@RequestParam String sort, @RequestParam String category) {
+        return postService.getPosts(sort, category);
 
     }
 

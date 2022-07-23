@@ -33,8 +33,16 @@ public class PostService {
         post = postRepository.save(post);
     }
 
-    public List<Post> getPosts() {
-        return postRepository.findAll();
+    public List<Post> getPosts(String sort, String category) {
+        switch (sort){
+            case "popular":
+                return postRepository.findAllByOrderByViewCountDesc();
+            case "almost":
+//                return postRepository.findAllByOrderByAlmost();
+            default:
+                System.out.println("default");
+                return postRepository.findAllByOrderByCreatedAtDesc();
+        }
     }
 
     public Post getPost(Long postId) {
