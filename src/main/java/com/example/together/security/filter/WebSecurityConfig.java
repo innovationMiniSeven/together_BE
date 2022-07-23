@@ -137,6 +137,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("PUT,/api/comments/**");
         skipPathList.add("DELETE,/api/comments/**");
 
+        skipPathList.add("POST,/api/signup/**");
+
 
         skipPathList.add("GET,/");
         skipPathList.add("GET,/basic.js");
