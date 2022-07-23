@@ -1,6 +1,7 @@
 package com.example.together.model;
 
 import com.example.together.TimeStamped;
+import com.example.together.dto.EditPostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -60,5 +61,15 @@ public class Post extends TimeStamped {
         this.user = user;
         this.imageUrl = imageUrl;
         this.viewCount = 0;
+    }
+
+    public void update(EditPostRequestDto requestDto){
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.deadline = requestDto.getDeadline();
+        this.numberPeople = requestDto.getNumberPeople();
+        this.currentNumberPeople = requestDto.getCurrentNumberPeople();
+        this. contactMethod = requestDto.getContactMethod();
+        this.imageUrl = requestDto.getImageUrl();
     }
 }
