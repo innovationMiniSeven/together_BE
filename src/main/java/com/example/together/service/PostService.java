@@ -33,7 +33,7 @@ public class PostService {
         post = postRepository.save(post);
     }
 
-    public List<PostResponseDto> getPosts() {
-        return null;
+    public List<Post> getPosts() {
+        return postRepository.findAll();
     }
 }

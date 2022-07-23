@@ -24,4 +24,18 @@ public class PostRequestDto {
     private String contactMethod;
 
     private String imageUrl;
+
+    @Override
+    public String toString() {
+        return "PostRequestDto{" +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", category=" + category +
+                ", deadline=" + deadline +
+                ", numberPeople=" + numberPeople +
+                ", currentNumberPeople=" + currentNumberPeople +
+                ", contactMethod='" + contactMethod + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                '}';
+    }
 }

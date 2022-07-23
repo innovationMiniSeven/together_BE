@@ -27,20 +27,21 @@ public class PostController {
 
     //게시글 생성
    @PostMapping("/api/post")
-    public Optional<RestApiException> createPost(@RequestBody PostRequestDto requestDto,
-                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public Optional<Post> createPost(@RequestBody PostRequestDto requestDto
+                                                    ) {
         // 로그인 되어 있는 회원 테이블의 ID
-        Long userId = userDetails.getUser().getId();
-
-        postService.createPost(requestDto, userId);
+//        Long userId = userDetails.getUser().getId();
+       Long userId = 1L;
 
         // 응답 보내기
+        postService.createPost(requestDto, userId);
+
         return null;
     }
 
     @GetMapping("/api/posts")
-    public List<PostResponseDto> getPosts() {
-
+    public List<Post> getPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        postService.getPosts();
         return postService.getPosts();
 
     }

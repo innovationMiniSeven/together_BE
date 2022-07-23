@@ -5,19 +5,13 @@ import lombok.Getter;
 
 @Getter
 public enum CategoryEnum {
-    PURCHASE("PURCHASE"),
-    DELIVERY("DELIVERY"),
-    EXHIBITION("EXHIBITION"),
-    ETC("ETC");
-
-    String category;
-
-    CategoryEnum(String category) {
-        this.category = category;
-    }
+    PURCHASE,
+    DELIVERY,
+    EXHIBITION,
+    ETC;
 
     @JsonCreator
-    public static CategoryEnum fromCategory(String category) {
+    public static CategoryEnum from(String category) {
         switch (category) {
             case "PURCHASE":
                 return CategoryEnum.PURCHASE;
@@ -28,6 +22,6 @@ public enum CategoryEnum {
             case "ETC":
                 return CategoryEnum.ETC;
         }
-        return CategoryEnum.ETC;
+        return null;
     }
 }
