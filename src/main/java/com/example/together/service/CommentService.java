@@ -36,7 +36,7 @@ public class CommentService {
                 ()-> new IllegalArgumentException("존재하지 않는 Post 입니다")
         );
 
-        String content = commentRequestDto.getComment();
+        String content = commentRequestDto.getContent();
         Comment comment = new Comment(post,user,content);
 
         commentRepository.save(comment);
@@ -70,7 +70,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 ()-> new IllegalArgumentException("존재하지 않는 comment입니다")
         );
-        if(comment.getUser() != user){
+        if(!comment.getUser().getId().equals(user.getId())){
            throw  new IllegalArgumentException("댓글을 삭제 할 권한이 없습니다");
         }
         commentRepository.deleteById(commentId);
