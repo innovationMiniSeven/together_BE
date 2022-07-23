@@ -2,12 +2,14 @@ package com.example.together.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 @Configuration
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
@@ -37,12 +39,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // css 폴더를 login 없이 허용
                 .antMatchers("/css/**").permitAll()
 // 회원 관리 처리 API 전부를 login 없이 허용
-                .antMatchers("/api/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
 // 그 외 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
                 .and()
 // [로그인 기능]
                 .formLogin()
+                .loginPage("/login")
 // 로그인 View 제공 (GET /user/login)
 // 로그인 처리 (POST /user/login)
                 .loginProcessingUrl("/api/login")

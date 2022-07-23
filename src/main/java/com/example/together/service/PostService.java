@@ -1,17 +1,24 @@
 package com.example.together.service;
 
+
+import com.example.together.dto.EditPostRequestDto;
+import com.example.together.dto.GetPostRespnseDto;
 import com.example.together.dto.PostRequestDto;
 import com.example.together.dto.PostResponseDto;
 import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
 import com.example.together.repository.UserRepository;
+import com.example.together.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -45,7 +52,30 @@ public class PostService {
         }
     }
 
-    public Post getPost(Long postId) {
-        return postRepository.findById(postId) .orElseThrow(()->new IllegalArgumentException("없는 글입니다,"));
+    public GetPostRespnseDto getPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+        // 조회될 때 마다 veiwCount 1 증가
+        post.updateViewCount();
+        return new GetPostRespnseDto(post);
+    }
+
+
+    public void editPost(Long postId, User user, EditPostRequestDto requestDto) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+        if(!user.getId().equals(post.getUser().getId())){
+            throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
+        }
+        post.updatePost(requestDto);
+    }
+
+    public void deletePost(Long postId, User user) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
+        if(!user.getId().equals(post.getUser().getId())){
+            throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
+        }
+        postRepository.deleteById(postId);
     }
 }

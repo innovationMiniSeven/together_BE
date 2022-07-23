@@ -1,9 +1,9 @@
 package com.example.together.controller;
 
-import com.example.together.dto.PostRequestDto;
-import com.example.together.dto.PostResponseDto;
 import com.example.together.exception.RestApiException;
 import com.example.together.model.Post;
+import com.example.together.dto.*;
+import com.example.together.model.User;
 import com.example.together.security.UserDetailsImpl;
 import com.example.together.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,28 @@ public class PostController {
     }
 
     @GetMapping("/api/post/{postId}")
-    public Post getPost(@PathVariable Long postId) {
+    public GetPostRespnseDto getPost(@PathVariable Long postId){
         return postService.getPost(postId);
+    }
 
+    @PutMapping("/api/post/{postId}")
+    public void editPost(@PathVariable Long postId,
+                         @RequestBody EditPostRequestDto requestDto,
+                         @AuthenticationPrincipal UserDetailsImpl userDetails){
+        User user = userDetails.getUser();
+        if(user == null){
+            throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다.");
+        }
+        postService.editPost(postId, user, requestDto);
+    }
+
+    @DeleteMapping("/api/post/{postId}")
+    public void deletePost(@PathVariable Long postId,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+        User user = userDetails.getUser();
+        if(user == null){
+            throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다.");
+        }
+        postService.deletePost(postId, user);
     }
 }
