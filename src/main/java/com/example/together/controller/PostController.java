@@ -5,8 +5,8 @@ import com.example.together.dto.GetPostResponseDto;
 import com.example.together.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.example.together.dto.GetPostRespnseDto;
 
-import java.util.List;
 
 @RestController
 public class PostController {
@@ -18,7 +18,7 @@ public class PostController {
     }
 
     @GetMapping("/api/post/{postId}")
-    public GetPostResponseDto getPost(@PathVariable Long postId){
+    public GetPostRespnseDto getPost(@PathVariable Long postId){
         return postService.getPost(postId);
     }
 

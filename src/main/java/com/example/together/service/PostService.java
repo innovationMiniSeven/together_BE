@@ -1,13 +1,16 @@
 package com.example.together.service;
 
 import com.example.together.dto.EditPostRequestDto;
-import com.example.together.dto.GetPostResponseDto;
+import com.example.together.dto.GetPostRespnseDto;
 import com.example.together.model.Post;
 import com.example.together.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class PostService {
     private final PostRepository postRepository;
 
@@ -16,10 +19,10 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public GetPostResponseDto getPost(Long postId) {
+    public GetPostRespnseDto getPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
-        return new GetPostResponseDto(post);
+        return new GetPostRespnseDto(post);
     }
 
 
