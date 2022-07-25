@@ -53,9 +53,6 @@ public class PostController {
                          @RequestBody EditPostRequestDto requestDto,
                          @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-        if(user == null){
-            throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다.");
-        }
         postService.editPost(postId, user, requestDto);
     }
 
@@ -63,9 +60,6 @@ public class PostController {
     public void deletePost(@PathVariable Long postId,
                            @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-        if(user == null){
-            throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다.");
-        }
         postService.deletePost(postId, user);
     }
 }
