@@ -13,7 +13,7 @@ public class SignupRequestDto {
 
     private String password;
     // confirmPassword로 수정할것!
-    private String confirm_password;
+    private String confirmPassword;
 
     private String nickname;
 

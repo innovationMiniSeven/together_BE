@@ -25,7 +25,7 @@ public class UserService {
         String username = signupRequestDto.getUsername();
         String nickname = signupRequestDto.getNickname();
         String password = signupRequestDto.getPassword();
-        String confirm_password = signupRequestDto.getConfirm_password();
+        String confirmPassword = signupRequestDto.getConfirmPassword();
 
         Optional<User> usernameUserFound = userRepository.findByUsername(username);
         if(usernameUserFound.isPresent()){
@@ -35,7 +35,7 @@ public class UserService {
         if(nicknameUserFound.isPresent()){
             throw new IllegalArgumentException("중복된 nickname이 존재합니다");
         }
-        if(!password.equals(confirm_password)){
+        if(!password.equals(confirmPassword)){
             throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
         User user = new User(nickname,username,passwordEncoder.encode(password));
