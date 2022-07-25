@@ -12,6 +12,7 @@ public enum CategoryEnum {
 
     @JsonCreator
     public static CategoryEnum from(String category) {
+        category = category.toUpperCase();
         switch (category) {
             case "PURCHASE":
                 return CategoryEnum.PURCHASE;
@@ -19,9 +20,8 @@ public enum CategoryEnum {
                 return CategoryEnum.DELIVERY;
             case "EXHIBITION":
                 return CategoryEnum.EXHIBITION;
-            case "ETC":
+            default:
                 return CategoryEnum.ETC;
         }
-        return null;
     }
 }
