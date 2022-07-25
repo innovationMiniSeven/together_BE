@@ -1,20 +1,26 @@
 package com.example.together.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.example.together.model.CategoryEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Getter
 @NoArgsConstructor
-public class EditPostRequestDto {
+public class GetPostsResponseDto {
     private String title;
-    private String content;
-    @JsonFormat(pattern = "yyyy.MM.dd") //데이터 포맷 변환
+    private CategoryEnum category;
     private LocalDateTime deadline;
     private int numberPeople;
     private int currentNumberPeople;
     private String contactMethod;
+    private int viewCount;
+    private String nickname;
     private String imageUrl;
+
+    public Long getDeadline() {
+        return deadline.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+    }
 }

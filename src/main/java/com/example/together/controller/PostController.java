@@ -1,6 +1,5 @@
 package com.example.together.controller;
 
-import com.example.together.exception.RestApiException;
 import com.example.together.model.Post;
 import com.example.together.dto.*;
 import com.example.together.model.User;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,10 +25,10 @@ public class PostController {
     public Optional<Post> createPost(@RequestBody PostRequestDto requestDto,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails
    ) {
+        System.out.print("deadline: ");
+        System.out.println(requestDto.getDeadline());
         // 로그인 되어 있는 회원 테이블의 ID
-       Long userId = userDetails.getUser().getId();
-       System.out.print("post create");
-       System.out.println(userId);
+        Long userId = userDetails.getUser().getId();
         // 응답 보내기
         postService.createPost(requestDto, userId);
 
@@ -39,13 +36,12 @@ public class PostController {
     }
 
     @GetMapping("/api/posts")
-    public Page<Post> getPosts(@RequestParam String sort, @RequestParam String category , @RequestParam int page, @RequestParam int size) {
+    public Page<GetPostsResponseDto> getPosts(@RequestParam String sort, @RequestParam String category , @RequestParam int page, @RequestParam int size) {
         return postService.getPosts(sort, category,page,size);
-
     }
 
     @GetMapping("/api/post/{postId}")
-    public GetPostRespnseDto getPost(@PathVariable Long postId){
+    public GetPostResponseDto getPost(@PathVariable Long postId){
         return postService.getPost(postId);
     }
 

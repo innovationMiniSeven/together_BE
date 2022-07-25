@@ -7,13 +7,11 @@ import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.CommentRepository;
 import com.example.together.repository.PostRepository;
-import com.example.together.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -21,14 +19,11 @@ public class CommentService {
 
     private final PostRepository postRepository;
 
-    private final UserRepository userRepository;
-
     @Autowired
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository) {
 
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
     }
 
     public void registerComment(Long postId, CommentRequestDto commentRequestDto, User user) {

@@ -9,12 +9,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Setter
-@Getter // get 함수를 일괄적으로 만들어줍니다.
-@NoArgsConstructor // 기본 생성자를 만들어줍니다.
-@Entity // DB 테이블 역할을 합니다.
+@Getter
+@NoArgsConstructor
+@Entity
 @AllArgsConstructor
 public class Post extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +34,7 @@ public class Post extends TimeStamped {
     private CategoryEnum category;
 
     @Column(nullable = false)
-    private Date deadline;
+    private LocalDateTime deadline;
 
     @Column(nullable = false)
     private int numberPeople;
@@ -52,12 +54,18 @@ public class Post extends TimeStamped {
 
     @Column(nullable = false)
     private int viewCount;
+    private LocalDateTime datetoLocalDateTime(Date date){
+        return date.toInstant() // Date -> Instant
+                .atZone(ZoneId.systemDefault()) // Instant -> ZonedDateTime
+                .toLocalDateTime() // ZonedDateTime -> LocalDateTime
+                .plusHours(14).plusMinutes(59).plusSeconds(59); //09시로 저장되는 것 해당 날짜 마지막 시간으로 변경
+    }
 
     public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.category = requestDto.getCategory();
-        this.deadline = requestDto.getDeadline();
+        this.deadline = datetoLocalDateTime(requestDto.getDeadline());
         this.numberPeople = requestDto.getNumberPeople();
         this.currentNumberPeople = requestDto.getCurrentNumberPeople();
         this.contactMethod = requestDto.getContactMethod();

@@ -2,19 +2,20 @@ package com.example.together.dto;
 
 import com.example.together.model.CategoryEnum;
 import com.example.together.model.Post;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class GetPostResponseDto {
-    private Long id;
     private String title;
     private String content;
     private CategoryEnum category;
-    private Date deadline;
+    private LocalDateTime deadline;
     private int numberPeople;
     private int currentNumberPeople;
     private String contactMethod;
@@ -24,7 +25,6 @@ public class GetPostResponseDto {
 
 
     public GetPostResponseDto(Post post) {
-        this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.category = post.getCategory();
