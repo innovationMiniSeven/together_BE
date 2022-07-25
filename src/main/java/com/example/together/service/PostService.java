@@ -4,24 +4,29 @@ package com.example.together.service;
 import com.example.together.dto.EditPostRequestDto;
 import com.example.together.dto.GetPostRespnseDto;
 import com.example.together.dto.PostRequestDto;
-import com.example.together.dto.PostResponseDto;
+import com.example.together.model.CategoryEnum;
 import com.example.together.model.Post;
+import com.example.together.model.QPost;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
 import com.example.together.repository.UserRepository;
-import com.example.together.security.UserDetailsImpl;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.hibernate.query.criteria.internal.expression.function.CurrentDateFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository) {
@@ -41,15 +46,69 @@ public class PostService {
     }
 
     public List<Post> getPosts(String sort, String category) {
-        switch (sort){
-            case "popular":
-                return postRepository.findAllByOrderByViewCountDesc();
-            case "almost":
-//                return postRepository.findAllByOrderByAlmost();
-            default:
-                System.out.println("default");
-                return postRepository.findAllByOrderByCreatedAtDesc();
+
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
+        QPost p = new QPost("p");
+        List<Post> findPosts;
+        if(category.equals("ALL")){
+            switch (sort){
+                case "popular":
+                    findPosts = jpaQueryFactory
+                            .select(p)
+                            .from(p)
+                            .orderBy(p.viewCount.desc())
+                            .fetch();
+                    break;
+                case "almost":
+                    //해야함
+                    findPosts = jpaQueryFactory
+                            .select(p)
+                            .from(p)
+                            .fetch();
+                    break;
+                default:
+                    System.out.println("default");
+                    findPosts = jpaQueryFactory
+                            .select(p)
+                            .from(p)
+                            .orderBy(p.createdAt.desc())
+                            .fetch();
+                    break;
+            }
+        } else {
+            switch (sort){
+                case "popular":
+                    findPosts = jpaQueryFactory
+                            .select(p)
+                            .from(p)
+                            .where(p.category.eq(CategoryEnum.valueOf(category)))
+                            .orderBy(p.viewCount.desc())
+                            .fetch();
+                    break;
+                case "almost":
+                    //해야함
+                    findPosts = jpaQueryFactory
+                            .select(p)
+                            .from(p)
+                            .where(p.category.eq(CategoryEnum.valueOf(category)))
+                            .fetch();
+                    break;
+                default:
+                    System.out.println("default");
+                    findPosts = jpaQueryFactory
+                            .select(p)
+                            .from(p)
+                            .where(p.category.eq(CategoryEnum.valueOf(category)))
+                            .orderBy(p.createdAt.desc())
+                            .fetch();
+                    break;
+            }
         }
+        System.out.println("FindPosts");
+        for(Post post:findPosts){
+            System.out.println("post = " + post.toString());
+        }
+        return findPosts;
     }
 
     public GetPostRespnseDto getPost(Long postId) {
