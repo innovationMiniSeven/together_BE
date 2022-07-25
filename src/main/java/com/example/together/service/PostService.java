@@ -4,29 +4,30 @@ package com.example.together.service;
 import com.example.together.dto.EditPostRequestDto;
 import com.example.together.dto.GetPostRespnseDto;
 import com.example.together.dto.PostRequestDto;
-import com.example.together.dto.PostResponseDto;
 import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
+import com.example.together.repository.PostRepositoryImpl;
 import com.example.together.repository.UserRepository;
-import com.example.together.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostRepositoryImpl postRepositoryImpl;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, PostRepositoryImpl postRepositoryImpl, EntityManager em) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.postRepositoryImpl = postRepositoryImpl;
     }
 
     public void createPost(PostRequestDto requestDto, Long userId) {
@@ -41,15 +42,7 @@ public class PostService {
     }
 
     public List<Post> getPosts(String sort, String category) {
-        switch (sort){
-            case "popular":
-                return postRepository.findAllByOrderByViewCountDesc();
-            case "almost":
-//                return postRepository.findAllByOrderByAlmost();
-            default:
-                System.out.println("default");
-                return postRepository.findAllByOrderByCreatedAtDesc();
-        }
+        return postRepositoryImpl.findAllByCategoryOrderBySort(sort,category);
     }
 
     public GetPostRespnseDto getPost(Long postId) {
