@@ -1,17 +1,17 @@
 package com.example.together.repository;
 
+import com.example.together.dto.GetPostsResponseDto;
 import com.example.together.model.CategoryEnum;
-import com.example.together.model.Post;
 import com.example.together.model.QPost;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import javax.sound.midi.Soundbank;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -22,8 +22,20 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private QPost post = QPost.post;
 
     @Override
-    public List<Post> findAllByCategoryOrderBySort(String sort, String category) {
-        return queryFactory.selectFrom(post)
+    public List<GetPostsResponseDto> findAllByCategoryOrderBySort(String sort, String category) {
+        return queryFactory.select(Projections.fields(
+                GetPostsResponseDto.class,
+                        post.title,
+                        post.category,
+                        post.deadline,
+                        post.numberPeople,
+                        post.currentNumberPeople,
+                        post.contactMethod,
+                        post.viewCount,
+                        post.user.nickname,
+                        post.imageUrl
+                        ))
+                .from(post)
                 .where(categoryContains(category))
                 .orderBy(orderByValidDeadline(),getOrderSpecifier(sort))
                 .fetch();
@@ -45,9 +57,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
     private OrderSpecifier<Integer> orderByValidDeadline() {
-        Date date = new Date();
-        System.out.print("Time: ");
-        System.out.println(date);
+        LocalDateTime date = LocalDateTime.now();
         return new CaseBuilder().when(post.deadline.lt(date)).then(1).otherwise(2).desc();
     }
 }

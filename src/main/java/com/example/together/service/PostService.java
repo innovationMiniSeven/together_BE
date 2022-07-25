@@ -2,7 +2,8 @@ package com.example.together.service;
 
 
 import com.example.together.dto.EditPostRequestDto;
-import com.example.together.dto.GetPostRespnseDto;
+import com.example.together.dto.GetPostResponseDto;
+import com.example.together.dto.GetPostsResponseDto;
 import com.example.together.dto.PostRequestDto;
 import com.example.together.model.Post;
 import com.example.together.model.User;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -41,16 +45,16 @@ public class PostService {
         post = postRepository.save(post);
     }
 
-    public List<Post> getPosts(String sort, String category) {
+    public List<GetPostsResponseDto> getPosts(String sort, String category) {
         return postRepositoryImpl.findAllByCategoryOrderBySort(sort,category);
     }
 
-    public GetPostRespnseDto getPost(Long postId) {
+    public GetPostResponseDto getPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 포스트입니다."));
         // 조회될 때 마다 veiwCount 1 증가
         post.updateViewCount();
-        return new GetPostRespnseDto(post);
+        return new GetPostResponseDto(post);
     }
 
 

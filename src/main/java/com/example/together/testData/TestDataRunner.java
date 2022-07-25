@@ -13,6 +13,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
@@ -84,9 +85,10 @@ public class TestDataRunner implements ApplicationRunner {
                     .toString();
             int viewCount = random.nextInt(100)+1;
 
-            int dateTime = random.nextInt(1000000);
+            int dateTime = random.nextInt(20000000)-10000000;
 
-            Date deadline = new Date(System.currentTimeMillis()-dateTime);
+            LocalDateTime deadline = LocalDateTime.now();
+            deadline = deadline.plusSeconds(dateTime);
 
             Post post = new Post((long)i,title,content,category,deadline,numberPeople,currentNumberPeople,contactMethod,user,imageUrl,viewCount);
 
@@ -127,9 +129,10 @@ public class TestDataRunner implements ApplicationRunner {
                     .toString();
             int viewCount = random.nextInt(100)+1;
 
-            int dateTime = random.nextInt(10000000);
+            int dateTime = random.nextInt(20000000)-10000000;
 
-            Date deadline = new Date(System.currentTimeMillis()+dateTime);
+            LocalDateTime deadline = LocalDateTime.now();
+            deadline = deadline.plusSeconds(dateTime);
 
 
             Post post = new Post((long)j,title,content,category,deadline,numberPeople,currentNumberPeople,contactMethod,user,imageUrl,viewCount);
