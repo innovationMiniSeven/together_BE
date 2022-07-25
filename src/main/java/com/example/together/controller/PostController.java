@@ -7,6 +7,7 @@ import com.example.together.model.User;
 import com.example.together.security.UserDetailsImpl;
 import com.example.together.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +39,8 @@ public class PostController {
     }
 
     @GetMapping("/api/posts")
-    public List<Post> getPosts(@RequestParam String sort, @RequestParam String category) {
-        return postService.getPosts(sort, category);
+    public Page<Post> getPosts(@RequestParam String sort, @RequestParam String category , @RequestParam int page, @RequestParam int size) {
+        return postService.getPosts(sort, category,page,size);
 
     }
 
