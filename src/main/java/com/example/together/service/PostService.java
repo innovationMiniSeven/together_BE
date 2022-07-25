@@ -5,10 +5,12 @@ import com.example.together.dto.EditPostRequestDto;
 import com.example.together.dto.GetPostRespnseDto;
 import com.example.together.dto.PostRequestDto;
 import com.example.together.dto.PostResponseDto;
+import com.example.together.model.CategoryEnum;
 import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
 import com.example.together.repository.PostRepositoryImpl;
+import com.example.together.repository.PostRepositorySupport;
 import com.example.together.repository.UserRepository;
 import com.example.together.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +27,14 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepositoryImpl postRepositoryImpl;
 
+//    private final PostRepositorySupport postRepositorySupport;
+
     @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository, PostRepositoryImpl postRepositoryImpl) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.postRepositoryImpl = postRepositoryImpl;
+
     }
 
     public void createPost(PostRequestDto requestDto, Long userId) {
@@ -45,6 +50,31 @@ public class PostService {
 
     public List<Post> getPosts(String sort, String category) {
         return postRepositoryImpl.findAllByCategoryOrderBySort(sort,category);
+//        CategoryEnum categoryEnum = CategoryEnum.ETC;
+//        if(category.equals("PURCHASE")){
+//           categoryEnum =  CategoryEnum.PURCHASE;
+//        } else if (category.equals("DELIVERY")) {
+//            categoryEnum=CategoryEnum.DELIVERY;
+//        } else if (category.equals("EXHIBITION")) {
+//            categoryEnum = CategoryEnum.EXHIBITION;
+//        }
+//        switch (sort){
+//            case "popular":
+//                if(category.equals("all")){
+//                    return postRepositorySupport.findAllPopular();
+//                }
+//                return postRepositorySupport.findByCategoryPopular(categoryEnum);
+//            case "almost":
+//                if(category.equals("all")){
+//                    return postRepositorySupport.findAllAlmost();
+//                }
+//                return postRepositorySupport.findByCategoryAlmost(categoryEnum);
+//            default:
+//                if(category.equals("all")){
+//                    return postRepositorySupport.findAllDefault();
+//                }
+//                return postRepositorySupport.findByCategoryDefault(categoryEnum);
+//        }
     }
 
     public GetPostRespnseDto getPost(Long postId) {

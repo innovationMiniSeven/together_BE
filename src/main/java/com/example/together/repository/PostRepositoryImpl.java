@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import javax.sound.midi.Soundbank;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +45,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
     private OrderSpecifier<Integer> orderByValidDeadline() {
-        return new CaseBuilder().when(post.deadline.lt(new Date())).then(1).otherwise(2).desc();
+        Date date = new Date();
+        System.out.print("Time: ");
+        System.out.println(date);
+        return new CaseBuilder().when(post.deadline.lt(date)).then(1).otherwise(2).desc();
     }
 }

@@ -13,8 +13,11 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+
 
 @Component
 public class TestDataRunner implements ApplicationRunner {
@@ -36,7 +39,6 @@ public class TestDataRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.out.println(System.currentTimeMillis());
         User testUser1 = new User("1234","정국", passwordEncoder.encode("123"));
         User testUser2 = new User("123","제이홉", passwordEncoder.encode("123"));
         userRepository.save(testUser1);
@@ -126,9 +128,10 @@ public class TestDataRunner implements ApplicationRunner {
                     .toString();
             int viewCount = random.nextInt(100)+1;
 
-            int dateTime = random.nextInt();
 
-            Date deadline = new Date(System.currentTimeMillis()-dateTime);
+            int dateTime = random.nextInt(10000000);
+
+            Date deadline = new Date(System.currentTimeMillis()+dateTime);
 
             Post post = new Post((long)j,title,content,category,deadline,numberPeople,currentNumberPeople,contactMethod,user,imageUrl,viewCount);
 
@@ -138,4 +141,5 @@ public class TestDataRunner implements ApplicationRunner {
 
 
     }
+
 }
