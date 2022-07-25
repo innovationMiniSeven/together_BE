@@ -1,12 +1,10 @@
 package com.example.together;
 
 
-import com.example.together.dto.PostRequestDto;
 import com.example.together.model.CategoryEnum;
 import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
-import com.example.together.repository.PostRepositorySupport;
 import com.example.together.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -24,18 +23,11 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepositoryImpl postRepositoryImpl;
 
-//    private final PostRepositorySupport postRepositorySupport;
-    @PersistenceContext
-    private EntityManager em;
-
-
     @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository, PostRepositoryImpl postRepositoryImpl, EntityManager em) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.postRepositoryImpl = postRepositoryImpl;
-
-        this.em = em;
     }
 
     public void createPost(PostRequestDto requestDto, Long userId) {
@@ -51,94 +43,6 @@ public class PostService {
 
     public List<Post> getPosts(String sort, String category) {
         return postRepositoryImpl.findAllByCategoryOrderBySort(sort,category);
-//        CategoryEnum categoryEnum = CategoryEnum.ETC;
-//        if(category.equals("PURCHASE")){
-//           categoryEnum =  CategoryEnum.PURCHASE;
-//        } else if (category.equals("DELIVERY")) {
-//            categoryEnum=CategoryEnum.DELIVERY;
-//        } else if (category.equals("EXHIBITION")) {
-//            categoryEnum = CategoryEnum.EXHIBITION;
-//        }
-//        switch (sort){
-//            case "popular":
-//                if(category.equals("all")){
-//                    return postRepositorySupport.findAllPopular();
-//                }
-//                return postRepositorySupport.findByCategoryPopular(categoryEnum);
-//            case "almost":
-//                if(category.equals("all")){
-//                    return postRepositorySupport.findAllAlmost();
-//                }
-//                return postRepositorySupport.findByCategoryAlmost(categoryEnum);
-//            default:
-//                if(category.equals("all")){
-//                    return postRepositorySupport.findAllDefault();
-//                }
-//                return postRepositorySupport.findByCategoryDefault(categoryEnum);
-//        }
-
-//        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(em);
-//        QPost p = new QPost("p");
-//        List<Post> findPosts;
-//        if(category.equals("ALL")){
-//            switch (sort){
-//                case "popular":
-//                    findPosts = jpaQueryFactory
-//                            .select(p)
-//                            .from(p)
-//                            .orderBy(p.viewCount.desc())
-//                            .fetch();
-//                    break;
-//                case "almost":
-//                    //해야함
-//                    findPosts = jpaQueryFactory
-//                            .select(p)
-//                            .from(p)
-//                            .fetch();
-//                    break;
-//                default:
-//                    System.out.println("default");
-//                    findPosts = jpaQueryFactory
-//                            .select(p)
-//                            .from(p)
-//                            .orderBy(p.createdAt.desc())
-//                            .fetch();
-//                    break;
-//            }
-//        } else {
-//            switch (sort){
-//                case "popular":
-//                    findPosts = jpaQueryFactory
-//                            .select(p)
-//                            .from(p)
-//                            .where(p.category.eq(CategoryEnum.valueOf(category)))
-//                            .orderBy(p.viewCount.desc())
-//                            .fetch();
-//                    break;
-//                case "almost":
-//                    //해야함
-//                    findPosts = jpaQueryFactory
-//                            .select(p)
-//                            .from(p)
-//                            .where(p.category.eq(CategoryEnum.valueOf(category)))
-//                            .fetch();
-//                    break;
-//                default:
-//                    System.out.println("default");
-//                    findPosts = jpaQueryFactory
-//                            .select(p)
-//                            .from(p)
-//                            .where(p.category.eq(CategoryEnum.valueOf(category)))
-//                            .orderBy(p.createdAt.desc())
-//                            .fetch();
-//                    break;
-//            }
-//        }
-//        System.out.println("FindPosts");
-//        for(Post post:findPosts){
-//            System.out.println("post = " + post.toString());
-//        }
-//        return findPosts;
     }
 
     public GetPostRespnseDto getPost(Long postId) {
