@@ -4,17 +4,11 @@ package com.example.together.service;
 import com.example.together.dto.EditPostRequestDto;
 import com.example.together.dto.GetPostRespnseDto;
 import com.example.together.dto.PostRequestDto;
-import com.example.together.dto.PostResponseDto;
-import com.example.together.model.CategoryEnum;
 import com.example.together.model.Post;
-import com.example.together.model.QPost;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
 import com.example.together.repository.PostRepositoryImpl;
-import com.example.together.repository.PostRepositorySupport;
 import com.example.together.repository.UserRepository;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.hibernate.query.criteria.internal.expression.function.CurrentDateFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +30,12 @@ public class PostService {
 
 
     @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository, PostRepositoryImpl postRepositoryImpl) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, PostRepositoryImpl postRepositoryImpl, EntityManager em) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.postRepositoryImpl = postRepositoryImpl;
 
+        this.em = em;
     }
 
     public void createPost(PostRequestDto requestDto, Long userId) {
