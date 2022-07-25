@@ -5,9 +5,11 @@ import com.example.together.dto.EditPostRequestDto;
 import com.example.together.dto.GetPostRespnseDto;
 import com.example.together.dto.PostRequestDto;
 import com.example.together.dto.PostResponseDto;
+import com.example.together.model.CategoryEnum;
 import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
+import com.example.together.repository.PostRepositorySupport;
 import com.example.together.repository.UserRepository;
 import com.example.together.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,13 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
+    private final PostRepositorySupport postRepositorySupport;
+
     @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, PostRepositorySupport postRepositorySupport) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.postRepositorySupport = postRepositorySupport;
     }
 
     public void createPost(PostRequestDto requestDto, Long userId) {
@@ -41,14 +46,30 @@ public class PostService {
     }
 
     public List<Post> getPosts(String sort, String category) {
+        CategoryEnum categoryEnum = CategoryEnum.ETC;
+        if(category.equals("PURCHASE")){
+           categoryEnum =  CategoryEnum.PURCHASE;
+        } else if (category.equals("DELIVERY")) {
+            categoryEnum=CategoryEnum.DELIVERY;
+        } else if (category.equals("EXHIBITION")) {
+            categoryEnum = CategoryEnum.EXHIBITION;
+        }
         switch (sort){
             case "popular":
-                return postRepository.findAllByOrderByViewCountDesc();
+                if(category.equals("all")){
+                    return postRepositorySupport.findAllPopular();
+                }
+                return postRepositorySupport.findByCategoryPopular(categoryEnum);
             case "almost":
-//                return postRepository.findAllByOrderByAlmost();
+                if(category.equals("all")){
+                    return postRepositorySupport.findAllAlmost();
+                }
+                return postRepositorySupport.findByCategoryAlmost(categoryEnum);
             default:
-                System.out.println("default");
-                return postRepository.findAllByOrderByCreatedAtDesc();
+                if(category.equals("all")){
+                    return postRepositorySupport.findAllDefault();
+                }
+                return postRepositorySupport.findByCategoryDefault(categoryEnum);
         }
     }
 
