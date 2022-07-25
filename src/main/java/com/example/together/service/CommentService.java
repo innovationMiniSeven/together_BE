@@ -52,9 +52,10 @@ public class CommentService {
 
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
-        CommentResponseDto commentResponseDto = new CommentResponseDto();
+
 
         for(Comment comment:commentList){
+            CommentResponseDto commentResponseDto = new CommentResponseDto();
             commentResponseDto.setId(comment.getId());
             commentResponseDto.setContent(comment.getContent());
             commentResponseDto.setNickname(comment.getUser().getNickname());
