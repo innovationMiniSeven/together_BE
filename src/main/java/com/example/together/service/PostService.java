@@ -11,6 +11,9 @@ import com.example.together.repository.PostRepository;
 import com.example.together.repository.PostRepositoryImpl;
 import com.example.together.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -45,8 +48,9 @@ public class PostService {
         post = postRepository.save(post);
     }
 
-    public List<GetPostsResponseDto> getPosts(String sort, String category) {
-        return postRepositoryImpl.findAllByCategoryOrderBySort(sort,category);
+    public Page<GetPostsResponseDto> getPosts(String sort, String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return postRepositoryImpl.findAllByCategoryOrderBySort(sort,category,pageable);
     }
 
     public GetPostResponseDto getPost(Long postId) {

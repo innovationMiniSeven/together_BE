@@ -9,8 +9,10 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,8 +24,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private QPost post = QPost.post;
 
     @Override
-    public List<GetPostsResponseDto> findAllByCategoryOrderBySort(String sort, String category) {
-        return queryFactory.select(Projections.fields(
+    public Page<GetPostsResponseDto> findAllByCategoryOrderBySort(String sort, String category, Pageable pageable) {
+        List<GetPostsResponseDto> returnPost = queryFactory.select(Projections.fields(
                 GetPostsResponseDto.class,
                         post.title,
                         post.category,
@@ -39,7 +41,9 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .where(categoryContains(category))
                 .orderBy(orderByValidDeadline(),getOrderSpecifier(sort))
                 .fetch();
+        return new PageImpl<>(returnPost,pageable,returnPost.size());
     }
+
 
     private OrderSpecifier<?> getOrderSpecifier(String sort) {
         switch (sort){
