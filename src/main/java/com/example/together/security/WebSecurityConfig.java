@@ -1,6 +1,5 @@
 package com.example.together.security;
 
-import com.example.together.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -70,18 +68,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // 로그인 처리 후 성공 시 URL
                 .defaultSuccessUrl("/")
 // 로그인 처리 후 실패 시 URL
-                .failureUrl("/user/login?error")
                 .permitAll()
                 .and()
 // [로그아웃 기능]
                 .logout()
 // 로그아웃 요청 처리 URL
                 .logoutUrl("/api/logout")
-                .permitAll()
-                .and()
-                .exceptionHandling()
+                .permitAll();
 // "접근 불가" 페이지 URL 설정
-                .accessDeniedPage("/forbidden.html");
+
 
         http
                 .exceptionHandling()
