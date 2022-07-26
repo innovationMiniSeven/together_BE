@@ -2,11 +2,14 @@ package com.example.together.repository;
 
 import com.example.together.dto.GetPostsResponseDto;
 import com.example.together.model.CategoryEnum;
+import com.example.together.model.QComment;
 import com.example.together.model.QPost;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -20,6 +23,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     private QPost post = QPost.post;
+    private QComment comment = QComment.comment;
 
     @Override
     public Slice<GetPostsResponseDto> findAllByCategoryOrderBySort(String sort, String category, Pageable pageable) {
@@ -34,7 +38,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                         post.contactMethod,
                         post.viewCount,
                         post.user.nickname,
-                        post.imageUrl
+                        post.imageUrl,
+                        //댓글수
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(comment.count())
+                                        .from(comment)
+                                        .where(comment.post.id.eq(post.id)),"commentCount"
+                        )
                         ))
                 .from(post)
                 .where(categoryContains(category))
