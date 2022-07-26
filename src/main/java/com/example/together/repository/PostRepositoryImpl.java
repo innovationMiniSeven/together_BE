@@ -25,6 +25,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     public Slice<GetPostsResponseDto> findAllByCategoryOrderBySort(String sort, String category, Pageable pageable) {
         List<GetPostsResponseDto> returnPost = queryFactory.select(Projections.fields(
                 GetPostsResponseDto.class,
+                        post.id,
                         post.title,
                         post.category,
                         post.deadline,

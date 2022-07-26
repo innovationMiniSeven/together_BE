@@ -10,6 +10,7 @@ import java.time.ZoneId;
 @Getter
 @NoArgsConstructor
 public class GetPostsResponseDto {
+    private Long id;
     private String title;
     private CategoryEnum category;
     private LocalDateTime deadline;
