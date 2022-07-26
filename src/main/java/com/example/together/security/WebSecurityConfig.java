@@ -69,18 +69,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
 // [로그인 기능]
-                .formLogin()
-
-// 로그인 처리 (POST /user/login)
-                .loginPage("/login")
-                .loginProcessingUrl("/api/login")
-                .successHandler(new CustomAuthenticationSuccessHandler())
-                .failureHandler(new CustomAuthenticationFailureHandler())
-// 로그인 처리 후 성공 시 URL
-                .defaultSuccessUrl("/")
-// 로그인 처리 후 실패 시 URL
-                .permitAll()
-                .and()
+//                .formLogin()
+//
+//// 로그인 처리 (POST /user/login)
+//                .loginPage("/login")
+//                .loginProcessingUrl("/api/login")
+//                .successHandler(new CustomAuthenticationSuccessHandler())
+//                .failureHandler(new CustomAuthenticationFailureHandler())
+//// 로그인 처리 후 성공 시 URL
+//                .defaultSuccessUrl("/")
+//// 로그인 처리 후 실패 시 URL
+//                .permitAll()
+//                .and()
 // [로그아웃 기능]
                 .logout()
 // 로그아웃 요청 처리 URL

@@ -1,11 +1,21 @@
 package com.example.together.service;
 
+import com.example.together.dto.LoginRequestDto;
 import com.example.together.dto.SignupRequestDto;
 import com.example.together.model.User;
 import com.example.together.repository.UserRepository;
+import com.example.together.security.UserDetailsImpl;
+import com.example.together.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Service
@@ -13,10 +23,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final UserDetailsServiceImpl userDetailsService;
+
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userDetailsService = userDetailsService;
 
     }
 
@@ -42,4 +55,24 @@ public class UserService {
         userRepository.save(user);
 
     }
+
+    public User loginUser(LoginRequestDto loginRequestDto) {
+        User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 일치하지 않습니다.")
+        );
+
+        if(!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(user.getUsername()));
+
+        return user;
+
+    }
+
+    public Authentication getAuthentication(String username) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
 }
