@@ -14,7 +14,7 @@ public class PostRequestDto {
 
     private CategoryEnum category;
 
-    @JsonFormat(pattern = "yyyy.MM.dd") //데이터 포맷 변환
+    @JsonFormat(pattern = "yyyy-MM-dd") //데이터 포맷 변환
     private Date deadline;
 
     private int numberPeople;
