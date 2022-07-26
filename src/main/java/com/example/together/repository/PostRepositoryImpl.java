@@ -40,6 +40,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .from(post)
                 .where(categoryContains(category))
                 .orderBy(orderByValidDeadline(),getOrderSpecifier(sort))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
         return new PageImpl<>(returnPost,pageable,returnPost.size());
     }

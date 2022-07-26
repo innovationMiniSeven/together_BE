@@ -3,11 +3,10 @@ package com.example.together.model;
 import com.example.together.TimeStamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 import javax.persistence.*;
 
-@Setter
 @Getter
 @NoArgsConstructor
 @Entity
