@@ -10,6 +10,7 @@ import java.time.ZoneId;
 @Getter
 @NoArgsConstructor
 public class GetPostsResponseDto {
+    private Long id;
     private String title;
     private CategoryEnum category;
     private LocalDateTime deadline;
@@ -17,9 +18,9 @@ public class GetPostsResponseDto {
     private int currentNumberPeople;
     private String contactMethod;
     private int viewCount;
+    private Long commentCount;
     private String nickname;
     private String imageUrl;
-
     public Long getDeadline() {
         return deadline.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
     }
