@@ -9,9 +9,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +22,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private QPost post = QPost.post;
 
     @Override
-    public Page<GetPostsResponseDto> findAllByCategoryOrderBySort(String sort, String category, Pageable pageable) {
+    public Slice<GetPostsResponseDto> findAllByCategoryOrderBySort(String sort, String category, Pageable pageable) {
         List<GetPostsResponseDto> returnPost = queryFactory.select(Projections.fields(
                 GetPostsResponseDto.class,
                         post.title,
@@ -43,7 +41,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        return new PageImpl<>(returnPost,pageable,returnPost.size());
+        return new SliceImpl<>(returnPost, pageable, returnPost.iterator().hasNext());
     }
 
 

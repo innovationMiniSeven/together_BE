@@ -7,6 +7,7 @@ import com.example.together.security.UserDetailsImpl;
 import com.example.together.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class PostController {
     }
 
     @GetMapping("/api/posts")
-    public Page<GetPostsResponseDto> getPosts(@RequestParam String sort, @RequestParam String category , @RequestParam int page, @RequestParam int size) {
+    public Slice<GetPostsResponseDto> getPosts(@RequestParam String sort, @RequestParam String category , @RequestParam int page, @RequestParam int size) {
         return postService.getPosts(sort, category,page,size);
     }
 

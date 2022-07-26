@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -42,7 +43,7 @@ public class PostService {
         post = postRepository.save(post);
     }
 
-    public Page<GetPostsResponseDto> getPosts(String sort, String category, int page, int size) {
+    public Slice<GetPostsResponseDto> getPosts(String sort, String category, int page, int size) {
         Pageable pageable = PageRequest.of(page,size);
         return postRepositoryImpl.findAllByCategoryOrderBySort(sort,category,pageable);
     }
