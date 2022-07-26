@@ -1,14 +1,29 @@
 package com.example.together.security;
 
+import com.example.together.model.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
@@ -50,6 +65,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // 로그인 처리 (POST /user/login)
                 .loginPage("/login")
                 .loginProcessingUrl("/api/login")
+                .successHandler(new CustomAuthenticationSuccessHandler())
+                .failureHandler(new CustomAuthenticationFailureHandler())
 // 로그인 처리 후 성공 시 URL
                 .defaultSuccessUrl("/")
 // 로그인 처리 후 실패 시 URL
@@ -66,16 +83,55 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // "접근 불가" 페이지 URL 설정
                 .accessDeniedPage("/forbidden.html");
 
-//        http
-//                .exceptionHandling()
-//                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+        http
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+
     }
 
 
-//    private static class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-//        @Override
-//        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-//            response.sendError(403,"로그인 후 이용 해주세요");
-//        }
-//    }
+    private static class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+        private final ObjectMapper objectMapper = new ObjectMapper();
+        @Override
+       public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding("UTF-8");
+
+
+            objectMapper.writeValue(response.getWriter(), "로그인 후 이용해주세요");
+        }
+  }
+  private static class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
+      private final ObjectMapper objectMapper = new ObjectMapper();
+      @Override
+      public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+
+
+          response.setStatus(HttpStatus.OK.value());
+          response.setCharacterEncoding("UTF-8");
+          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+          objectMapper.writeValue(response.getWriter(),"로그인에 성공했습니다");
+
+
+
+
+      }
+  }
+  private static class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler{
+      private final ObjectMapper objectMapper = new ObjectMapper();
+      @Override
+      public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+
+          response.setStatus(HttpStatus.UNAUTHORIZED.value());
+          response.setCharacterEncoding("UTF-8");
+          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+          objectMapper.writeValue(response.getWriter(),"로그인에 실패했습니다");
+
+      }
+  }
+
+
 }
