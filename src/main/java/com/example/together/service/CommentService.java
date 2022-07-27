@@ -38,6 +38,8 @@ public class CommentService {
 
         Comment comment = new Comment(post,user,content);
 
+        post.addComment(comment);
+
         commentRepository.save(comment);
 
 

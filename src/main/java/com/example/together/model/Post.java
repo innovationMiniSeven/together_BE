@@ -11,7 +11,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Setter
 @Getter
@@ -54,6 +56,10 @@ public class Post extends TimeStamped {
 
     @Column(nullable = false)
     private int viewCount;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "post")
+    private List<Comment> commentList = new ArrayList<>();
+
     private LocalDateTime datetoLocalDateTime(Date date){
         return date.toInstant() // Date -> Instant
                 .atZone(ZoneId.systemDefault()) // Instant -> ZonedDateTime
@@ -86,5 +92,9 @@ public class Post extends TimeStamped {
 
     public void updateViewCount(){
         this.viewCount += 1;
+    }
+
+    public void addComment(Comment comment){
+        commentList.add(comment);
     }
 }
