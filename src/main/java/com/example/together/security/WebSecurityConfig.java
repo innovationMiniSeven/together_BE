@@ -1,6 +1,10 @@
 package com.example.together.security;
 
+import com.example.together.repository.UserRepository;
+import com.example.together.security.jwt.JwtAuthenticationFilter;
+import com.example.together.security.jwt.JwtAuthorizationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,6 +38,12 @@ import java.io.IOException;
 @EnableGlobalMethodSecurity(securedEnabled = true) // @Secured 어노테이션 활성화
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private CorsConfig corsConfig;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Bean
     public BCryptPasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder();
@@ -48,11 +59,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http
+                .addFilter(corsConfig.corsFilter())
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http
                 .cors()
                 .configurationSource(corsConfigurationSource());
+
+        http
+                .formLogin().disable()
+                .httpBasic().disable()
+
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository));
+
 
 
         http.authorizeRequests()
@@ -64,23 +86,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // 회원 관리 처리 API 전부를 login 없이 허용
                 .antMatchers(HttpMethod.GET,"/api/**").permitAll()
                 .antMatchers(HttpMethod.POST ,"/api/signup").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/login").permitAll()
+                .antMatchers("/api/login").permitAll()
+                //.antMatchers(HttpMethod.POST,"/api/login").permitAll()
                 .antMatchers(HttpMethod.GET,"/**").permitAll()
 // 그 외 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
-//                .and()
-// //[로그인 기능]
-//                .formLogin()
-//
-//// 로그인 처리 (POST /user/login)
-//                .loginPage("/login")
-//                .loginProcessingUrl("/api/login")
-//                .successHandler(new CustomAuthenticationSuccessHandler())
-//                .failureHandler(new CustomAuthenticationFailureHandler())
-//// 로그인 처리 후 성공 시 URL
-//                .defaultSuccessUrl("/")
-//// 로그인 처리 후 실패 시 URL
-//                .permitAll()
                 .and()
 // [로그아웃 기능]
                 .logout()

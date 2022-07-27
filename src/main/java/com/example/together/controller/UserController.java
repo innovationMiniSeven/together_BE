@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -33,16 +32,16 @@ public class UserController {
 
     }
 
-    @PostMapping("/api/login")
-    public void loginUser(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request){
-
-        User user = userService.loginUser(loginRequestDto);
-
-        HttpSession session = request.getSession();
-        session.setAttribute("user",user);
-
-
-    }
+//    @PostMapping("/api/login")
+//    public void loginUser(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request){
+//
+//        User user = userService.loginUser(loginRequestDto);
+//
+//        HttpSession session = request.getSession();
+//        session.setAttribute("user",user);
+//
+//
+//    }
 
     @GetMapping("/api/auth")
     public AuthResponseDto getAuth(@AuthenticationPrincipal UserDetailsImpl userDetails){

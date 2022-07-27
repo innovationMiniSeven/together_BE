@@ -44,6 +44,9 @@ dependencies {
     // 3. querydsl dependencies 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // java-jwt 추가
+    implementation group: 'com.auth0', name: 'java-jwt', version: '3.10.3'
 }
 
 tasks.named('test') {
