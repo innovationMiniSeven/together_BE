@@ -1,6 +1,5 @@
 package com.example.together.security;
 
-import com.auth0.jwt.JWT;
 import com.example.together.security.filter.FormLoginFilter;
 import com.example.together.security.filter.JwtAuthFilter;
 import com.example.together.security.jwt.HeaderTokenExtractor;
@@ -160,7 +159,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/api/post/**");
         skipPathList.add("GET,/api/comment/**");
 
-        skipPathList.add("GET,/");
+        skipPathList.add("GET,/**");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
@@ -221,7 +220,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
-
 
             objectMapper.writeValue(response.getWriter(), "로그인 후 이용해주세요");
         }
