@@ -77,7 +77,7 @@ public class Post extends TimeStamped {
     public void updatePost(EditPostRequestDto requestDto){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.deadline = requestDto.getDeadline();
+        this.deadline = datetoLocalDateTime(requestDto.getDeadline());
         this.numberPeople = requestDto.getNumberPeople();
         this.currentNumberPeople = requestDto.getCurrentNumberPeople();
         this. contactMethod = requestDto.getContactMethod();
