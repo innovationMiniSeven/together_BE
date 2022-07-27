@@ -1,6 +1,7 @@
 package com.example.together.testData;
 
 import com.example.together.model.CategoryEnum;
+import com.example.together.model.Comment;
 import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Component
@@ -39,8 +42,10 @@ public class TestDataRunner implements ApplicationRunner {
 
         User testUser1 = new User("1234","정국", passwordEncoder.encode("123"));
         User testUser2 = new User("123","제이홉", passwordEncoder.encode("123"));
+        User testUser3 = new User("testnickname","testid",passwordEncoder.encode("test123"));
         userRepository.save(testUser1);
         userRepository.save(testUser2);
+        userRepository.save(testUser3);
 
         CreateData(100,testUser1,testUser2);
 
@@ -50,6 +55,7 @@ public class TestDataRunner implements ApplicationRunner {
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 3;
+        List<Comment> commentList = new ArrayList<>();
         for(int i =0; i<count/2; i++){
             Random random = new Random();
             String title =random.ints(leftLimit, rightLimit + 1)
@@ -88,7 +94,7 @@ public class TestDataRunner implements ApplicationRunner {
             LocalDateTime deadline = LocalDateTime.now();
             deadline = deadline.plusSeconds(dateTime);
 
-            Post post = new Post((long)i,title,content,category,deadline,numberPeople,currentNumberPeople,contactMethod,user,imageUrl,viewCount);
+            Post post = new Post((long)i,title,content,category,deadline,numberPeople,currentNumberPeople,contactMethod,user,imageUrl,viewCount,commentList);
 
             postRepository.save(post);
 
@@ -133,7 +139,7 @@ public class TestDataRunner implements ApplicationRunner {
             deadline = deadline.plusSeconds(dateTime);
 
 
-            Post post = new Post((long)j,title,content,category,deadline,numberPeople,currentNumberPeople,contactMethod,user,imageUrl,viewCount);
+            Post post = new Post((long)j,title,content,category,deadline,numberPeople,currentNumberPeople,contactMethod,user,imageUrl,viewCount,commentList);
 
             postRepository.save(post);
 

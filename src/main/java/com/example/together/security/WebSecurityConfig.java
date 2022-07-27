@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -67,8 +68,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/**").permitAll()
 // 그 외 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
-                .and()
-// [로그인 기능]
+//                .and()
+// //[로그인 기능]
 //                .formLogin()
 //
 //// 로그인 처리 (POST /user/login)
@@ -80,11 +81,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .defaultSuccessUrl("/")
 //// 로그인 처리 후 실패 시 URL
 //                .permitAll()
-//                .and()
+                .and()
 // [로그아웃 기능]
                 .logout()
 // 로그아웃 요청 처리 URL
                 .logoutUrl("/api/logout")
+                .logoutSuccessUrl("/")
+                .logoutSuccessHandler(new customLogoutSuccessHandler())
                 .permitAll();
 // "접근 불가" 페이지 URL 설정
 
@@ -110,6 +113,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
+    private static class customLogoutSuccessHandler implements LogoutSuccessHandler{
+        private final ObjectMapper objectMapper = new ObjectMapper();
+
+        @Override
+        public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+            response.setStatus(HttpStatus.OK.value());
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            objectMapper.writeValue(response.getWriter(),"로그아웃에 성공했습니다");
+
+
+        }
+    }
+
 
     private static class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
         private final ObjectMapper objectMapper = new ObjectMapper();
@@ -123,36 +141,37 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             objectMapper.writeValue(response.getWriter(), "로그인 후 이용해주세요");
         }
   }
-  private static class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
-      private final ObjectMapper objectMapper = new ObjectMapper();
-      @Override
-      public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-
-          response.setStatus(HttpStatus.OK.value());
-          response.setCharacterEncoding("UTF-8");
-          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-          objectMapper.writeValue(response.getWriter(),"로그인에 성공했습니다");
-
-
-
-
-      }
-  }
-  private static class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler{
-      private final ObjectMapper objectMapper = new ObjectMapper();
-      @Override
-      public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-
-          response.setStatus(HttpStatus.UNAUTHORIZED.value());
-          response.setCharacterEncoding("UTF-8");
-          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-          objectMapper.writeValue(response.getWriter(),"로그인에 실패했습니다");
-
-      }
-  }
+//  private static class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
+//      private final ObjectMapper objectMapper = new ObjectMapper();
+//      @Override
+//      public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//
+//
+//          response.setStatus(HttpStatus.OK.value());
+//          response.setCharacterEncoding("UTF-8");
+//          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//
+//          objectMapper.writeValue(response.getWriter(),"로그인에 성공했습니다");
+//
+//
+//
+//
+//      }
+//  }
+//  private static class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler{
+//      private final ObjectMapper objectMapper = new ObjectMapper();
+//      @Override
+//      public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+//
+//          response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//          response.setCharacterEncoding("UTF-8");
+//          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//
+//          objectMapper.writeValue(response.getWriter(),"로그인에 실패했습니다");
+//
+//      }
+//  }
 
 
 }
