@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class EditPostRequestDto {
     private String title;
     private String content;
-    @JsonFormat(pattern = "yyyy.MM.dd") //데이터 포맷 변환
+    @JsonFormat(pattern = "yyyy-MM-dd") //데이터 포맷 변환
     private LocalDateTime deadline;
     private int numberPeople;
     private int currentNumberPeople;
