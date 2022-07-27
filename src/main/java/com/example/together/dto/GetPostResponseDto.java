@@ -2,6 +2,7 @@ package com.example.together.dto;
 
 import com.example.together.model.CategoryEnum;
 import com.example.together.model.Post;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ public class GetPostResponseDto {
     private String content;
     private CategoryEnum category;
     private LocalDateTime deadline;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime createdAt;
     private int numberPeople;
     private int currentNumberPeople;
     private String contactMethod;
@@ -35,6 +38,7 @@ public class GetPostResponseDto {
         this.nickname = post.getUser().getNickname();
         this.imageUrl = post.getImageUrl();
         this.viewCount = post.getViewCount();
+        this.createdAt = post.getCreatedAt();
     }
 }
 
