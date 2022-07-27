@@ -1,22 +1,19 @@
 package com.example.together.service;
 
-import com.example.together.dto.EditPostRequestDto;
-import com.example.together.dto.GetPostResponseDto;
-import com.example.together.dto.GetPostsResponseDto;
-import com.example.together.dto.PostRequestDto;
+import com.example.together.dto.*;
 import com.example.together.model.Post;
 import com.example.together.model.User;
 import com.example.together.repository.PostRepository;
 import com.example.together.repository.PostRepositoryImpl;
 import com.example.together.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -73,5 +70,10 @@ public class PostService {
             throw new IllegalArgumentException("접근 권한이 없는 사용자입니다.");
         }
         postRepository.deleteById(postId);
+    }
+
+    public List<GetMyPostResponseDto> getMyPost(User user) {
+        Long userId = user.getId();
+        return postRepositoryImpl.findAllByUserIdOrderByCreatedAt(userId);
     }
 }

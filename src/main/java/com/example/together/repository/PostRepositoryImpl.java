@@ -1,5 +1,6 @@
 package com.example.together.repository;
 
+import com.example.together.dto.GetMyPostResponseDto;
 import com.example.together.dto.GetPostsResponseDto;
 import com.example.together.model.CategoryEnum;
 import com.example.together.model.QComment;
@@ -57,6 +58,36 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
 
+
+    @Override
+    public List<GetMyPostResponseDto> findAllByUserIdOrderByCreatedAt(Long userId) {
+        return queryFactory.select(Projections.fields(
+                        GetMyPostResponseDto.class,
+                        post.id,
+                        post.title,
+                        post.category,
+                        post.deadline,
+                        post.numberPeople,
+                        post.currentNumberPeople,
+                        post.contactMethod,
+                        post.viewCount,
+                        post.user.nickname,
+                        post.imageUrl,
+                        //댓글수
+                        ExpressionUtils.as(
+                                JPAExpressions
+                                        .select(comment.count())
+                                        .from(comment)
+                                        .where(comment.post.id.eq(post.id)),"commentCount"
+                        )
+                ))
+                .from(post)
+                .where(post.user.id.eq(userId))
+                .orderBy(post.createdAt.desc())
+                .fetch();
+    }
+
+
     private OrderSpecifier<?> getOrderSpecifier(String sort) {
         switch (sort){
             case "popular":
@@ -76,4 +107,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         LocalDateTime date = LocalDateTime.now();
         return new CaseBuilder().when(post.deadline.lt(date)).then(1).otherwise(2).desc();
     }
+
+
 }

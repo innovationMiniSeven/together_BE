@@ -6,10 +6,11 @@ import com.example.together.model.User;
 import com.example.together.security.UserDetailsImpl;
 import com.example.together.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -60,4 +61,11 @@ public class PostController {
         User user = userDetails.getUser();
         postService.deletePost(postId, user);
     }
+
+    @GetMapping("/api/mypost")
+    public List<GetMyPostResponseDto> getMyPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        User user = userDetails.getUser();
+        return postService.getMyPost(user);
+    }
+
 }
