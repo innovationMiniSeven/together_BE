@@ -1,22 +1,30 @@
 package com.example.together.security;
 
+import com.auth0.jwt.JWT;
+import com.example.together.security.filter.FormLoginFilter;
+import com.example.together.security.filter.JwtAuthFilter;
+import com.example.together.security.jwt.HeaderTokenExtractor;
+import com.example.together.security.provider.FormLoginAuthProvider;
+import com.example.together.security.provider.JWTAuthProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,15 +35,35 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
 @EnableGlobalMethodSecurity(securedEnabled = true) // @Secured 어노테이션 활성화
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final JWTAuthProvider jwtAuthProvider;
+    private final HeaderTokenExtractor headerTokenExtractor;
+
+    public WebSecurityConfig(
+            JWTAuthProvider jwtAuthProvider,
+            HeaderTokenExtractor headerTokenExtractor
+    ) {
+        this.jwtAuthProvider = jwtAuthProvider;
+        this.headerTokenExtractor = headerTokenExtractor;
+    }
+
     @Bean
     public BCryptPasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) {
+        auth
+                .authenticationProvider(formLoginAuthProvider())
+                .authenticationProvider(jwtAuthProvider);
     }
 
     @Override
@@ -49,6 +77,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+
+        // 서버에서 인증은 JWT로 인증하기 때문에 Session의 생성을 막습니다.
+        http
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+/*
+        * 1.
+                * UsernamePasswordAuthenticationFilter 이전에 FormLoginFilter, JwtFilter 를 등록합니다.
+         * FormLoginFilter : 로그인 인증을 실시합니다.
+                * JwtFilter       : 서버에 접근시 JWT 확인 후 인증을 실시합니다.
+                */
+        http
+                .addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .cors()
@@ -68,19 +110,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/**").permitAll()
 // 그 외 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
-//                .and()
-// //[로그인 기능]
-//                .formLogin()
-//
-//// 로그인 처리 (POST /user/login)
-//                .loginPage("/login")
-//                .loginProcessingUrl("/api/login")
-//                .successHandler(new CustomAuthenticationSuccessHandler())
-//                .failureHandler(new CustomAuthenticationFailureHandler())
-//// 로그인 처리 후 성공 시 URL
-//                .defaultSuccessUrl("/")
-//// 로그인 처리 후 실패 시 URL
-//                .permitAll()
                 .and()
 // [로그아웃 기능]
                 .logout()
@@ -96,6 +125,61 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 
+    }
+
+    @Bean
+    public FormLoginFilter formLoginFilter() throws Exception {
+        FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
+        formLoginFilter.setFilterProcessesUrl("/api/login");
+        formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.afterPropertiesSet();
+        return formLoginFilter;
+    }
+
+    @Bean
+    public FormLoginSuccessHandler formLoginSuccessHandler() {
+        return new FormLoginSuccessHandler();
+    }
+
+    @Bean
+    public FormLoginAuthProvider formLoginAuthProvider() {
+        return new FormLoginAuthProvider(encodePassword());
+    }
+
+    private JwtAuthFilter jwtFilter() throws Exception {
+        List<String> skipPathList = new ArrayList<>();
+
+        // h2-console 허용
+        skipPathList.add("GET,/h2-console/**");
+        skipPathList.add("POST,/h2-console/**");
+        // 회원 관리 API 허용
+        skipPathList.add("POST,/api/signup");
+        skipPathList.add("POST,/api/login");
+        //전체 게시글 조회
+        skipPathList.add("GET,/api/posts");
+        skipPathList.add("GET,/api/post/**");
+        skipPathList.add("GET,/api/comment/**");
+
+        skipPathList.add("GET,/");
+
+        FilterSkipMatcher matcher = new FilterSkipMatcher(
+                skipPathList,
+                "/**"
+        );
+
+        JwtAuthFilter filter = new JwtAuthFilter(
+                matcher,
+                headerTokenExtractor
+        );
+        filter.setAuthenticationManager(super.authenticationManagerBean());
+
+        return filter;
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Bean
@@ -142,37 +226,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             objectMapper.writeValue(response.getWriter(), "로그인 후 이용해주세요");
         }
   }
-
-//  private static class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler{
-//      private final ObjectMapper objectMapper = new ObjectMapper();
-//      @Override
-//      public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//
-//
-//          response.setStatus(HttpStatus.OK.value());
-//          response.setCharacterEncoding("UTF-8");
-//          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//
-//          objectMapper.writeValue(response.getWriter(),"로그인에 성공했습니다");
-//
-//
-//
-//
-//      }
-//  }
-//  private static class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler{
-//      private final ObjectMapper objectMapper = new ObjectMapper();
-//      @Override
-//      public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-//
-//          response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//          response.setCharacterEncoding("UTF-8");
-//          response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//
-//          objectMapper.writeValue(response.getWriter(),"로그인에 실패했습니다");
-//
-//      }
-//  }
-
-
 }

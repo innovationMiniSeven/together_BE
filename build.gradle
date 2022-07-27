@@ -44,6 +44,13 @@ dependencies {
     // 3. querydsl dependencies 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'commons-codec:commons-codec:1.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    compileOnly 'com.auth0:java-jwt:3.13.0'
 }
 
 tasks.named('test') {
