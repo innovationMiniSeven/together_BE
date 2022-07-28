@@ -25,7 +25,6 @@ public class UserController {
     @PostMapping("/api/signup")
     public void registerUser(@RequestBody SignupRequestDto signupRequestDto){
         userService.registerUser(signupRequestDto);
-
     }
 
 
@@ -34,9 +33,7 @@ public class UserController {
         String nickname = userDetails.getUser().getNickname();
 
         AuthResponseDto authResponseDto = new AuthResponseDto(nickname);
-
         return authResponseDto;
-
     }
 
 }

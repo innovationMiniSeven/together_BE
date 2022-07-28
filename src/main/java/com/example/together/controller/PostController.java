@@ -27,8 +27,6 @@ public class PostController {
     public Optional<Post> createPost(@RequestBody PostRequestDto requestDto,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails
    ) {
-        System.out.print("deadline: ");
-        System.out.println(requestDto.getDeadline());
         // 로그인 되어 있는 회원 테이블의 ID
         Long userId = userDetails.getUser().getId();
         // 응답 보내기

@@ -56,7 +56,6 @@ public class UserService {
 
     }
 
-
     public Authentication getAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

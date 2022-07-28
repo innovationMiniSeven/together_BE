@@ -60,18 +60,11 @@ public class Post extends TimeStamped {
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
 
-    private LocalDateTime datetoLocalDateTime(Date date){
-        return date.toInstant() // Date -> Instant
-                .atZone(ZoneId.systemDefault()) // Instant -> ZonedDateTime
-                .toLocalDateTime() // ZonedDateTime -> LocalDateTime
-                .plusHours(14).plusMinutes(59).plusSeconds(59); //09시로 저장되는 것 해당 날짜 마지막 시간으로 변경
-    }
-
     public Post(PostRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.category = requestDto.getCategory();
-        this.deadline = datetoLocalDateTime(requestDto.getDeadline());
+        this.deadline = dateToLocalDateTime(requestDto.getDeadline());
         this.numberPeople = requestDto.getNumberPeople();
         this.currentNumberPeople = requestDto.getCurrentNumberPeople();
         this.contactMethod = requestDto.getContactMethod();
@@ -83,7 +76,7 @@ public class Post extends TimeStamped {
     public void updatePost(EditPostRequestDto requestDto){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.deadline = datetoLocalDateTime(requestDto.getDeadline());
+        this.deadline = dateToLocalDateTime(requestDto.getDeadline());
         this.numberPeople = requestDto.getNumberPeople();
         this.currentNumberPeople = requestDto.getCurrentNumberPeople();
         this. contactMethod = requestDto.getContactMethod();
@@ -96,5 +89,12 @@ public class Post extends TimeStamped {
 
     public void addComment(Comment comment){
         commentList.add(comment);
+    }
+
+    private LocalDateTime dateToLocalDateTime(Date date){
+        return date.toInstant() // Date -> Instant
+                .atZone(ZoneId.systemDefault()) // Instant -> ZonedDateTime
+                .toLocalDateTime() // ZonedDateTime -> LocalDateTime
+                .plusHours(14).plusMinutes(59).plusSeconds(59); //09시로 저장되는 것 해당 날짜 마지막 시간으로 변경
     }
 }

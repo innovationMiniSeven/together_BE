@@ -42,7 +42,6 @@ public class PostService {
             throw new IllegalArgumentException("deadline이 오늘보다 빠릅니다.");
         }
 
-
         //저장할 post 객체 생성
         Post post = new Post(requestDto, user);
 

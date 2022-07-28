@@ -52,7 +52,6 @@ public class CommentService {
 
         List<CommentResponseDto> commentResponseDtoList = commentRepositoryImpl.findAllByPost(post);
 
-
         return commentResponseDtoList;
 
     }
