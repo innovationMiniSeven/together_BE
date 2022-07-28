@@ -56,19 +56,6 @@ public class UserService {
 
     }
 
-    public User loginUser(LoginRequestDto loginRequestDto) {
-        User user = userRepository.findByUsername(loginRequestDto.getUsername()).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 일치하지 않습니다.")
-        );
-
-        if(!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
-        }
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(user.getUsername()));
-
-        return user;
-
-    }
 
     public Authentication getAuthentication(String username) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);

@@ -3,7 +3,6 @@ package com.example.together.controller;
 import com.example.together.dto.AuthResponseDto;
 import com.example.together.dto.LoginRequestDto;
 import com.example.together.dto.SignupRequestDto;
-import com.example.together.model.User;
 import com.example.together.security.UserDetailsImpl;
 import com.example.together.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 @RestController
 public class UserController {
@@ -33,16 +28,6 @@ public class UserController {
 
     }
 
-    @PostMapping("/api/login")
-    public void loginUser(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request){
-
-        User user = userService.loginUser(loginRequestDto);
-
-        HttpSession session = request.getSession();
-        session.setAttribute("user",user);
-
-
-    }
 
     @GetMapping("/api/auth")
     public AuthResponseDto getAuth(@AuthenticationPrincipal UserDetailsImpl userDetails){
