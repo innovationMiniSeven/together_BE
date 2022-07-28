@@ -13,6 +13,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -30,9 +31,17 @@ public class PostService {
     }
 
     public void createPost(PostRequestDto requestDto, Long userId) {
+        Date date = new Date();
         //게시글을 작성하고자 하는 user정보 가져오기
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new IllegalArgumentException("해당 유저가 없습니다."));
+        if(requestDto.getNumberPeople()<=requestDto.getCurrentNumberPeople()){
+            throw new IllegalArgumentException("모집 인원보다 현재 인원이 더 많거나 같습니다.");
+        }
+        if(requestDto.getDeadline().before(date)){
+            throw new IllegalArgumentException("deadline이 오늘보다 빠릅니다.");
+        }
+
 
         //저장할 post 객체 생성
         Post post = new Post(requestDto, user);

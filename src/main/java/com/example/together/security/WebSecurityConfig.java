@@ -6,6 +6,7 @@ import com.example.together.security.jwt.HeaderTokenExtractor;
 import com.example.together.security.provider.FormLoginAuthProvider;
 import com.example.together.security.provider.JWTAuthProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -106,7 +108,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/api/**").permitAll()
                 .antMatchers(HttpMethod.POST ,"/api/signup").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/login").permitAll()
-                .antMatchers(HttpMethod.GET,"/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/").permitAll()
+                .antMatchers(HttpMethod.GET,"/login").permitAll()
+                .antMatchers(HttpMethod.GET,"/join").permitAll()
+                .antMatchers(HttpMethod.GET,"/post/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/post").permitAll()
 // 그 외 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
                 .and()
@@ -131,6 +137,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
         formLoginFilter.setFilterProcessesUrl("/api/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.setAuthenticationFailureHandler(formLoginFailureHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
     }
@@ -138,6 +145,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public FormLoginSuccessHandler formLoginSuccessHandler() {
         return new FormLoginSuccessHandler();
+    }
+
+    @Bean
+    public FormLoginFailureHandler formLoginFailureHandler() {
+        return new FormLoginFailureHandler();
     }
 
     @Bean
@@ -159,7 +171,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/api/post/**");
         skipPathList.add("GET,/api/comment/**");
 
-        skipPathList.add("GET,/**");
+        skipPathList.add("GET,/");
+        skipPathList.add("GET,/login");
+        skipPathList.add("GET,/join");
+        skipPathList.add("GET,/post/**");
+        skipPathList.add("GET,/post");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
@@ -221,7 +237,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
 
-            objectMapper.writeValue(response.getWriter(), "로그인 후 이용해주세요");
+            objectMapper.writeValue(response.getWriter(), authException.getMessage());
         }
   }
 }
